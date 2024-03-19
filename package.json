@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "ndb": "^1.1.5",
+    "slugify": "^1.6.6"
+  }
+}
