@@ -24,6 +24,11 @@ router
     productsController.getAllProducts)
 .post(authController.protect,
     authController.restrictTo('admin'),
+    productsController.uploadProductImages,
+        // productsController.resizeProductImages,
+        // productsController.uploadProductImageCoverToCloud,
+        // productsController.uploadProductImagesToCloud,
+        productsController.uploadMultipleImagesToCloud,
     productsController.createProduct)
 
 router
@@ -33,7 +38,7 @@ router
     authController.restrictTo('admin'),
     productsController.uploadProductImages,
         // productsController.resizeProductImages,
-        productsController.uploadProductImageCoverToCloud,
+        // productsController.uploadProductImageCoverToCloud,
         productsController.uploadProductImagesToCloud,
     productsController.updateProduct)
 .delete(authController.protect,

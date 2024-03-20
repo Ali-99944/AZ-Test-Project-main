@@ -30,8 +30,10 @@ exports.updateOne = Model => catchAsync(async (req, res,next)=>{
 })
 
 exports.createOne = Model => catchAsync(async (req,res,next)=>{
-
-        const doc = await Model.create(req.body);
+    //// this imagesUrl are from the cloud after upload images to cloud
+    const imagesUrls = req.imagesUrls || [];
+    const additionalProperties = { ...req.body, images: imagesUrls };
+        const doc = await Model.create(additionalProperties);
 
         res.status(201).json(
             {message:'success',

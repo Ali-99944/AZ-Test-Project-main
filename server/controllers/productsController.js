@@ -63,35 +63,24 @@ await Promise.all(
 next()
 })
 ///////////////////////////
-exports.uploadProductImageCoverToCloud = async (req, res, next) => {
-    const imageCoverPath = req.files['imageCover'][0].path;
+// exports.uploadProductImageCoverToCloud = async (req, res, next) => {
+//     const imageCoverPath = req.files['imageCover'][0].path;
   
-   await cloudinary.uploader.upload(imageCoverPath, (err, result) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({
-          success: false,
-          message: "Error uploading imageCover"
-        });
-      }
-  
-      Product.findByIdAndUpdate(req.params.id, { imageCover: result.url }, (err, product) => {
-        if (err) {
-          console.error(err);
-          return res.status(500).json({
-            success: false,
-            message: "Error updating product"
-          });
-        }
-        
-        // res.status(200).json({
-        //   message: "ImageCover uploaded",
-        //   imageCover: result
-        // });
-      });
-    });
-    next()
-  };
+//     try {
+//         const result = await cloudinary.uploader.upload(imageCoverPath);
+//         // Set the imageUrls in the request object
+//         console.log(result.url)
+//         req.imageUrls = result.url
+//         next();
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({
+//             success: false,
+//             message: "Error uploading imageCover"
+//         });
+//     }
+//     next()
+//   };
 // exports.uploadProductImageCoverToCloud = (req,res,next) => {
 // const imageCoverPath = req.files['imageCover'][0].path
 // cloudinary.uploader.upload(imageCoverPath,  (err, result)=>{
@@ -113,7 +102,37 @@ exports.uploadProductImageCoverToCloud = async (req, res, next) => {
 //   )
 // //   next()
 // }
-//// this middleware is responsible of uploading Only images of the product to the cloudinary
+// //////////////////////////// uploade images when create a new product 
+exports.uploadMultipleImagesToCloud = async (req, res, next) => {
+    const imagesPath = req.files['images'].map(image => image.path);
+
+    try {
+        const imagesUploadPromises = imagesPath.map(imagePath => {
+            return cloudinary.uploader.upload(imagePath).catch(error => {
+                // If any error occurs during the upload, reject the promise with the error.
+                return Promise.reject(error);
+            });
+        });
+
+        const results = await Promise.all(imagesUploadPromises);
+
+        // Extract the URLs of the uploaded images
+        const imagesUrls = results.map(result => result.url);
+
+        // Set the imageUrls in the request object
+        req.imagesUrls = imagesUrls;
+
+        next();
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Error uploading images"
+        });
+    }
+};
+///////////////////////////////////////////////////////////////
+//// this middleware is responsible of uploading images of the product to the cloudinary when update exiting product 
 exports.uploadProductImagesToCloud = async function (req, res, next) {
     const imagesPath = req.files['images'].map(image => image.path);
   

@@ -40,10 +40,10 @@ const productSchema = new mongoose.Schema({
             type:Number,
             required: [true,'product quantity required']
         },
-     imageCover:{
-        type:String,
-        // required: [true, 'product imageCover required']
-     },
+    //  imageCover:{
+    //     type:String,
+    //     // required: [true, 'product imageCover required']
+    //  },
 
      images:[String],
 
